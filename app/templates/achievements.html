@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+{% block title %}Achievements — Habit Garden{% endblock %}
+
+{% block content %}
+<div class="achievements-page">
+
+  <div class="achievements-header">
+    <h1 class="page-title">Achievements</h1>
+    <p class="page-subtitle">
+      You've unlocked <strong>{{ total_earned }}</strong>
+      of <strong>{{ total_all }}</strong> achievements.
+    </p>
+    <div class="ach-progress-bar">
+      <div class="ach-progress-fill"
+           style="width: {{ (total_earned / total_all * 100) | int if total_all else 0 }}%">
+      </div>
+    </div>
+    <p class="ach-progress-label">
+      {{ (total_earned / total_all * 100) | int if total_all else 0 }}% Complete
+    </p>
+  </div>
+
+  <div class="ach-grid">
+    {% for item in ach_data %}
+    <div class="ach-card {% if item.earned %}earned{% else %}locked{% endif %}">
+      <div class="ach-icon">
+        {% if item.earned %}{{ item.achievement.icon }}{% else %}🔒{% endif %}
+      </div>
+      <div class="ach-info">
+        <h3 class="ach-title">{{ item.achievement.title }}</h3>
+        <p class="ach-desc">{{ item.achievement.description }}</p>
+        {% if item.earned %}
+          <span class="ach-badge earned-badge">
+            ✓ Earned
+            {% if item.earned_at %} · {{ item.earned_at.strftime("%b %d, %Y") }}{% endif %}
+          </span>
+        {% else %}
+          <span class="ach-badge locked-badge">Locked</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

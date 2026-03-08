@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% block title %}Create Account — Habit Garden{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">🌱</div>
+      <h1 class="auth-title">Start Your Garden</h1>
+      <p class="auth-subtitle">Plant your first habit. Watch it grow.</p>
+    </div>
+
+    <form class="auth-form" method="POST" action="{{ url_for('main.register') }}">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" class="form-input"
+               placeholder="Choose a username" required autofocus />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-input"
+               placeholder="your@email.com" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="form-input"
+               placeholder="Choose a password" required minlength="6" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        Create My Garden 🌿
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account?
+      <a href="{{ url_for('main.login') }}">Go back to your garden</a>
+    </p>
+  </div>
+  <div class="auth-deco auth-deco-left">🌻</div>
+  <div class="auth-deco auth-deco-right">🌿</div>
+</div>
+{% endblock %}

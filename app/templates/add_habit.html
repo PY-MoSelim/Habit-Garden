@@ -1,0 +1,137 @@
+
+{% extends "base.html" %}
+{% block title %}New Habit — Habit Garden{% endblock %}
+
+{% block content %}
+<div class="form-page">
+
+  <div class="form-header">
+    <h1 class="page-title">Plant a New Habit</h1>
+    <p class="page-subtitle">Choose your habit and the plant that will grow with it.</p>
+  </div>
+
+  <div class="form-layout">
+    <div class="form-card">
+      <form method="POST" action="{{ url_for('main.add_habit') }}" id="habit-form">
+
+        <div class="form-group">
+          <label for="name">Habit Name</label>
+          <input type="text" id="name" name="name" class="form-input"
+                 placeholder="e.g. Morning Exercise" maxlength="100" required autofocus />
+        </div>
+
+        <div class="form-group">
+          <label for="description">
+            Description <span class="label-optional">(optional)</span>
+          </label>
+          <textarea id="description" name="description" class="form-input form-textarea"
+                    placeholder="Describe your habit in a few words..."
+                    maxlength="255" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Frequency</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="frequency" value="daily" checked />
+              <span class="radio-label">
+                <span class="radio-icon">📅</span> Daily
+              </span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="frequency" value="weekly" />
+              <span class="radio-label">
+                <span class="radio-icon">📆</span> Weekly
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <input type="hidden" name="plant_id" id="plant_id" value="" required />
+
+        <div class="form-group">
+          <label>Choose Your Plant</label>
+          <div class="plant-picker" id="plant-picker">
+            {% for plant in plants %}
+            <div class="picker-card" data-plant-id="{{ plant.id }}"
+                 onclick="selectPlant({{ plant.id }}, this)">
+              <div class="picker-emoji">
+                {{ plant_emoji(plant.css_class, 3, false) }}
+              </div>
+              <div class="picker-name">{{ plant.name }}</div>
+              <div class="picker-desc">{{ plant.description }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          <p class="picker-hint" id="picker-hint" style="display:none; color:var(--error)">
+            Please select a plant.
+          </p>
+        </div>
+
+        <div class="form-actions">
+          <a href="{{ url_for('main.garden') }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            🌱 Plant It
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="preview-card" id="preview-card">
+      <h3 class="preview-title">Preview</h3>
+      <div class="preview-plant" id="preview-emoji">🪴</div>
+      <p class="preview-name"  id="preview-name">Select a plant</p>
+      <p class="preview-desc"  id="preview-desc">
+        Your habit will grow as you stay consistent.
+      </p>
+      <div class="preview-stages">
+        <span title="Seed">🌰</span>
+        <span class="arrow">→</span>
+        <span title="Sprout">🌱</span>
+        <span class="arrow">→</span>
+        <span title="Growing">🌿</span>
+        <span class="arrow">→</span>
+        <span id="stage4-emoji" title="Blooming">🌼</span>
+        <span class="arrow">→</span>
+        <span id="stage5-emoji" title="Fully Grown">🌻</span>
+      </div>
+      <p class="preview-stages-label">Growth stages</p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const plantData = {
+    {% for plant in plants %}
+    {{ plant.id }}: {
+      name: "{{ plant.name }}",
+      desc: "{{ plant.description }}",
+      css:  "{{ plant.css_class }}"
+    },
+    {% endfor %}
+  };
+
+  function selectPlant(id, el) {
+    document.querySelectorAll(".picker-card").forEach(c => c.classList.remove("selected"));
+    el.classList.add("selected");
+    document.getElementById("plant_id").value = id;
+    document.getElementById("picker-hint").style.display = "none";
+
+    const p = plantData[id];
+    document.getElementById("preview-name").textContent = p.name;
+    document.getElementById("preview-desc").textContent = p.desc;
+  }
+
+  document.getElementById("habit-form").addEventListener("submit", function(e) {
+    if (!document.getElementById("plant_id").value) {
+      e.preventDefault();
+      document.getElementById("picker-hint").style.display = "block";
+      document.getElementById("plant-picker").scrollIntoView({ behavior: "smooth" });
+    }
+  });
+</script>
+{% endblock %}
